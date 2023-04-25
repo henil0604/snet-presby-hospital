@@ -21,6 +21,9 @@ const config = {
     alias: {
       "@/*": "./src/*",
     },
+    csrf: {
+      checkOrigin: false,
+    }
   },
 };
 
