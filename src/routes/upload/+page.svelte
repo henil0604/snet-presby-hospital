@@ -51,7 +51,7 @@
             inputRef.value = "";
         }
 
-        await fetchImages();
+        images = (await fetchImages())!;
         loading.set(false);
     }
 

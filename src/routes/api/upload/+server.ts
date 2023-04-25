@@ -3,7 +3,13 @@ import type { RequestHandler } from "./$types";
 // @ts-ignore
 import random from '@helper-modules/random';
 import { prisma } from "@/lib/server/prisma";
-import imagekit from "@/lib/server/imagekit";
+import Filic from 'filic';
+import fsNode from 'fs/promises';
+
+const fs = Filic.create();
+
+const $static = fs.openDir("static")
+const $uploads = $static.openDir("uploads")
 
 export const POST: RequestHandler = async ({ request }) => {
 
@@ -28,13 +34,18 @@ export const POST: RequestHandler = async ({ request }) => {
 
     const id = random(30);
 
-    let upload;
+    const fileExtension = file.name.split('.').pop();
+
+    const fileName = `${id}.${fileExtension}`
+
     try {
-        upload = await imagekit.upload({
-            file: Buffer.from(await file.arrayBuffer()),
-            fileName: id,
-            folder: "/xray-snet"
-        })
+
+        const $file = $uploads.openFile(fileName);
+
+        const buffer = Buffer.from(await file.arrayBuffer());
+
+        await fsNode.writeFile($file.absolutePath, buffer)
+
     } catch (e) {
         console.error(e);
         throw error(500, "Failed to upload image")
@@ -46,7 +57,7 @@ export const POST: RequestHandler = async ({ request }) => {
             data: {
                 name: file.name,
                 size: file.size,
-                url: upload.url
+                url: `/${$uploads.dirname}/${fileName}`
             }
         })
     } catch (e) {
@@ -59,7 +70,7 @@ export const POST: RequestHandler = async ({ request }) => {
         message: "Uploaded Successfully",
         data: {
             ...image,
-            upload
         }
     }, { status: 201 });
+
 };
