@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
 
     let files: FileList;
+    let inputRef: HTMLInputElement;
 
     let images: Image[] = [];
 
@@ -45,6 +46,10 @@
             });
         }
 
+        if (inputRef) {
+            inputRef.value = "";
+        }
+
         await fetchImages();
         loading.set(false);
     }
@@ -77,13 +82,13 @@
     });
 </script>
 
-<div class="flex flex-col items-center py-10">
-    <div class="card min-w-fit px-4">
+<div class="flex flex-col items-center py-10 px-2">
+    <div class="card px-4">
         <header class="card-header text-left">
             <h2>Upload Image</h2>
         </header>
         <section class="p-4 py-8 flex">
-            <input bind:files type="file" />
+            <input bind:this={inputRef} bind:files type="file" />
         </section>
         <footer class="card-footer">
             <button
@@ -95,15 +100,22 @@
 
     <div class="my-3" />
     <!-- Images -->
-    <nav class="list-nav">
-        <ul>
-            {#each images as image}
-                <li>
-                    <a target="_blank" href={image.url}>
-                        <span class="flex-auto">{image.name}</span>
-                    </a>
-                </li>
-            {/each}
-        </ul>
-    </nav>
+    <div class="grid grid-cols-2 gap-5 max-md:grid-cols-1 px-3">
+        {#each images as image}
+            <a
+                href={image.url}
+                target="_blank"
+                class="card py-3 h-fit overflow-hidden"
+            >
+                <header>
+                    <img
+                        src={image.url}
+                        alt=""
+                        class="bg-black/50 w-[500px] max-h-[1000px]"
+                    />
+                </header>
+                <span class="flex-auto px-2">{image.name}</span>
+            </a>
+        {/each}
+    </div>
 </div>
