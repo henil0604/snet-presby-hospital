@@ -1,34 +1,27 @@
 <script lang="ts">
     import { loading } from "@/lib/store";
+    import fetchImages from "@/utils/fetchImages";
     import type { Image } from "@prisma/client";
     import { toastStore } from "@skeletonlabs/skeleton";
     import { onMount } from "svelte";
 
+    let fetchedImages: Image[] = [];
     let images: Image[] = [];
+    let searchValue = "";
 
-    async function fetchImages() {
-        const response = await fetch("/api/get-images");
-        const data = await response.json();
-
-        if (response.status !== 200) {
-            toastStore.trigger({
-                message: data.message,
-                background: "variant-filled-error",
-            });
+    function handleSearch() {
+        if (searchValue === "") {
+            images = fetchedImages;
         }
 
-        if (!data.data) {
-            return;
-        }
-
-        const gotImages: Image[] = data.data;
-
-        images = gotImages.sort((a, b) => a.name.localeCompare(b.name));
+        images = fetchedImages.filter((i) => i.name.includes(searchValue));
+        return;
     }
 
     onMount(async () => {
         loading.set(true);
-        await fetchImages();
+        fetchedImages = (await fetchImages())!;
+        images = (await fetchImages())!;
         loading.set(false);
     });
 </script>
@@ -36,6 +29,14 @@
 <!-- DOCTOR -->
 
 <div class="flex flex-col items-center py-10 px-2">
+    <input
+        type="text"
+        placeholder="Search..."
+        bind:value={searchValue}
+        on:input={handleSearch}
+        class="input px-5 py-3 w-fit"
+    />
+    <div class="my-2" />
     <div class="grid grid-cols-2 gap-5 max-md:grid-cols-1 px-3">
         {#each images as image}
             <a

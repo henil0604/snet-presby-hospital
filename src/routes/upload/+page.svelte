@@ -1,5 +1,6 @@
 <script lang="ts">
     import { loading } from "@/lib/store";
+    import fetchImages from "@/utils/fetchImages";
     import type { Image } from "@prisma/client";
     import { AppShell, FileButton, toastStore } from "@skeletonlabs/skeleton";
     import { onMount } from "svelte";
@@ -54,29 +55,9 @@
         loading.set(false);
     }
 
-    async function fetchImages() {
-        const response = await fetch("/api/get-images");
-        const data = await response.json();
-
-        if (response.status !== 200) {
-            toastStore.trigger({
-                message: data.message,
-                background: "variant-filled-error",
-            });
-        }
-
-        if (!data.data) {
-            return;
-        }
-
-        const gotImages: Image[] = data.data;
-
-        images = gotImages.sort((a, b) => a.name.localeCompare(b.name));
-    }
-
     onMount(async () => {
         loading.set(true);
-        await fetchImages();
+        images = (await fetchImages())!;
         loading.set(false);
     });
 </script>
