@@ -14,7 +14,9 @@
             images = fetchedImages;
         }
 
-        images = fetchedImages.filter((i) => i.name.includes(searchValue));
+        images = fetchedImages.filter((i) =>
+            i.name.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
+        );
         return;
     }
 
