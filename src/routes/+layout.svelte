@@ -3,8 +3,16 @@
     import "@skeletonlabs/skeleton/styles/all.css";
 
     import "@/app.postcss";
-    import { AppShell, ProgressRadial, Toast } from "@skeletonlabs/skeleton";
+    import {
+        AppBar,
+        AppShell,
+        ProgressRadial,
+        Toast,
+    } from "@skeletonlabs/skeleton";
     import { loading } from "@/lib/store";
+    import { page } from "$app/stores";
+
+    console.log($page);
 </script>
 
 {#if $loading}
@@ -21,9 +29,22 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <div class="w-full py-4 px-3 border-b">
-            <div class="font-bold text-2xl">Presby Hospital, Donkorkrom</div>
-        </div>
+        <AppBar>
+            <svelte:fragment slot="lead"
+                ><a href="/" class="font-bold">
+                    Presby Hospital, Donkorkrom
+                </a></svelte:fragment
+            >
+
+            <svelte:fragment slot="trail">
+                {#if $page.url.pathname !== "/"}
+                    <a href="/" class="btn variant-filled-secondary"
+                        >For Doctor</a
+                    >
+                {/if}
+                <a href="/upload" class="btn variant-filled-primary">Upload</a>
+            </svelte:fragment>
+        </AppBar>
     </svelte:fragment>
 
     <!-- Router Slot -->
