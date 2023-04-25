@@ -11,8 +11,13 @@
     } from "@skeletonlabs/skeleton";
     import { loading } from "@/lib/store";
     import { page } from "$app/stores";
+    import { onMount } from "svelte";
 
-    console.log($page);
+    let isRoot = false;
+
+    onMount(() => {
+        isRoot = $page.url.pathname === "/";
+    });
 </script>
 
 {#if $loading}
@@ -37,7 +42,7 @@
             >
 
             <svelte:fragment slot="trail">
-                {#if $page.url.pathname !== "/"}
+                {#if !isRoot}
                     <a href="/" class="btn variant-filled-secondary"
                         >For Doctor</a
                     >

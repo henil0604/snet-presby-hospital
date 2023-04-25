@@ -5,11 +5,12 @@ import random from '@helper-modules/random';
 import { prisma } from "@/lib/server/prisma";
 import Filic from 'filic';
 import fsNode from 'fs/promises';
+import { base } from "$app/paths";
 
 const fs = Filic.create();
 
-const $static = fs.openDir("static")
-const $uploads = $static.openDir("uploads")
+const $public = fs.openDir("public")
+const $uploads = $public.openDir("uploads")
 
 export const POST: RequestHandler = async ({ request }) => {
 
@@ -57,7 +58,7 @@ export const POST: RequestHandler = async ({ request }) => {
             data: {
                 name: file.name,
                 size: file.size,
-                url: `/${$uploads.dirname}/${fileName}`
+                url: `${base}/${$uploads.dirname}/${fileName}`
             }
         })
     } catch (e) {
