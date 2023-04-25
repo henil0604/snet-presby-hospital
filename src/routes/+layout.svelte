@@ -42,7 +42,6 @@
                         >For Doctor</a
                     >
                 {/if}
-                <a href="/upload" class="btn variant-filled-primary">Upload</a>
             </svelte:fragment>
         </AppBar>
     </svelte:fragment>
